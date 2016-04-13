@@ -231,6 +231,7 @@ describe VagrantPlugins::Openstack::Config do
 
   describe 'validation' do
     let(:machine) { double('machine') }
+    let(:ui)      { double('ui') }
     let(:validation_errors) { subject.validate(machine)['Openstack Provider'] }
     let(:error_message) { double('error message') }
 
@@ -244,6 +245,7 @@ describe VagrantPlugins::Openstack::Config do
       ssh.stub(:username) { 'ssh username' }
       config.stub(:ssh) { ssh }
       machine.stub(:config) { config }
+      machine.stub(:ui) { ui }
       subject.username = 'foo'
       subject.password = 'bar'
       subject.tenant_name = 'tenant'
@@ -347,16 +349,14 @@ describe VagrantPlugins::Openstack::Config do
     end
 
     context 'the ssh_timeout' do
-      it 'should error if do not represent an integer' do
-        subject.ssh_timeout = 'timeout'
-        I18n.should_receive(:t).with('vagrant_openstack.config.invalid_value_for_parameter',
-                                     parameter: 'ssh_timeout', value: 'timeout').and_return error_message
-        validation_errors.first.should == error_message
-      end
-      it 'should be parsed as integer if is a string that represent an integer' do
-        subject.ssh_timeout = '100'
-        validation_errors.size.should eq(0)
-        expect(subject.ssh_timeout).to eq(100)
+      it 'should return a deprecation notice if set' do
+        subject.ssh_timeout = 100
+
+        I18n.should_receive(:t).with('vagrant_openstack.config.ssh_timeout_deprecated').and_return error_message
+        expect(ui).to receive(:warn).with(error_message)
+
+        # Invoke validation
+        validation_errors
       end
     end
 
