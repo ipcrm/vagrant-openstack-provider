@@ -73,8 +73,9 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :ssh_username
 
-      # The SSH timeout use after server creation. If server startup is too long
-      # the timeout value can be increase with this variable. Default is 60 seconds
+      # The SSH timeout use after server creation.
+      #
+      # Deprecated. Use config.vm.boot_timeout instead.
       #
       # @return [Integer]
       attr_accessor :ssh_timeout
@@ -311,7 +312,7 @@ module VagrantPlugins
         # The SSH values by default are nil, and the top-level config
         # `config.ssh` values are used.
         @ssh_username = nil if @ssh_username == UNSET_VALUE
-        @ssh_timeout = 180 if @ssh_timeout == UNSET_VALUE
+        @ssh_timeout = nil if @ssh_timeout == UNSET_VALUE
         @server_create_timeout = 200 if @server_create_timeout == UNSET_VALUE
         @server_active_timeout = 200 if @server_active_timeout == UNSET_VALUE
         @server_stop_timeout = 200 if @server_stop_timeout == UNSET_VALUE
@@ -339,7 +340,7 @@ module VagrantPlugins
 
         validate_ssh_username(machine, errors)
         validate_stack_config(errors)
-        validate_ssh_timeout(errors)
+        validate_ssh_timeout(machine)
 
         if machine.config.ssh.private_key_path
           puts I18n.t('vagrant_openstack.config.keypair_name_required').yellow unless @keypair_name || @public_key_path
@@ -374,11 +375,8 @@ module VagrantPlugins
         errors << I18n.t('vagrant_openstack.config.ssh_username_required') unless @ssh_username || machine.config.ssh.username
       end
 
-      def validate_ssh_timeout(errors)
-        return if @ssh_timeout.nil? || @ssh_timeout == UNSET_VALUE
-        @ssh_timeout = Integer(@ssh_timeout) if @ssh_timeout.is_a? String
-      rescue ArgumentError
-        errors << I18n.t('vagrant_openstack.config.invalid_value_for_parameter', parameter: 'ssh_timeout', value: @ssh_timeout)
+      def validate_ssh_timeout(machine)
+        machine.ui.warn I18n.t('vagrant_openstack.config.ssh_timeout_deprecated') if @ssh_timeout
       end
 
       def valid_uri?(value)
