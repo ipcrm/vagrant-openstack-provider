@@ -57,6 +57,7 @@ module VagrantPlugins
       # key.
       def self.action_read_state
         new_builder.tap do |b|
+          b.use HandleBox
           b.use ConfigValidate
           b.use ConnectOpenstack
           b.use ReadState
@@ -93,6 +94,7 @@ module VagrantPlugins
 
       def self.action_up
         new_builder.tap do |b|
+          b.use HandleBox
           b.use ConfigValidate
           b.use ConnectOpenstack
 
