@@ -7,6 +7,8 @@ module VagrantPlugins
         { name: :'network-list', file: 'network_list', clazz: 'NetworkList' },
         { name: :'subnet-list', file: 'subnet_list', clazz: 'SubnetList' },
         { name: :'floatingip-list', file: 'floatingip_list', clazz: 'FloatingIpList' },
+        { name: :'hosts-list', file: 'get_host_entries', clazz: 'GetHostEntries' },
+        { name: :'puppet-hosts-list', file: 'get_puppetized_hosts', clazz: 'GetPuppetHosts' },
         { name: :'volume-list', file: 'volume_list', clazz: 'VolumeList' },
         { name: :'reset', file: 'reset', clazz: 'Reset' }
       ]
