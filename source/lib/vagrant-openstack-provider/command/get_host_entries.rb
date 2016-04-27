@@ -10,12 +10,12 @@ module VagrantPlugins
         def cmd(name, argv, env)
           fail Errors::NoArgRequiredForCommand, cmd: name unless argv.size == 0
 
+          rows = []
           floating_ips = env[:openstack_client].nova.get_floating_ips(env)
           floating_ips.each do |floating_ip|
             if floating_ip['instance_id'] != nil
               server_details = env[:openstack_client].nova.get_server_details(env, floating_ip['instance_id'])
               name = server_details['name']
-              shortname = server_details['name'].split('.')[0]
 
               floating_ip = ""
               server_details['addresses'].keys.each do |a|
@@ -25,11 +25,11 @@ module VagrantPlugins
                   end
                 end
               end
-
-              puts "#{floating_ip} #{name} #{shortname}"
+              rows << [ name, floating_ip ]
 
             end
           end
+          display_table(env, ['Instance', 'Floating IP'], rows)
         end
       end
     end

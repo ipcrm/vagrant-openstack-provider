@@ -388,7 +388,7 @@ en:
       flaotingip_list_synopsis : |-
         List floating IP and floating IP pools
       get_host_entries_synopsis : |-
-        Print out hosts file using the floating ips from instances
+        Print out instance name with floating ip
       get_puppet_hosts_synopsis : |-
         Print out hosts file using puppet syntax to create host entries
       volume_list_synopsis : |-
