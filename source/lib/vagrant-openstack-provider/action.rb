@@ -57,6 +57,7 @@ module VagrantPlugins
       # key.
       def self.action_read_state
         new_builder.tap do |b|
+          b.use HandleBox
           b.use ConfigValidate
           b.use ConnectOpenstack
           b.use ReadState
@@ -93,6 +94,7 @@ module VagrantPlugins
 
       def self.action_up
         new_builder.tap do |b|
+          b.use HandleBox
           b.use ConfigValidate
           b.use ConnectOpenstack
 
@@ -105,7 +107,7 @@ module VagrantPlugins
               b2.use CreateStack
               b2.use CreateServer
               b2.use Message, I18n.t('vagrant_openstack.ssh_disabled_provisioning') if ssh_disabled
-              b2.use WaitForServerToBeAccessible unless ssh_disabled
+              b2.use WaitForCommunicator unless ssh_disabled
             when :shutoff
               b2.use StartServer
             when :suspended
@@ -216,7 +218,6 @@ module VagrantPlugins
       autoload :ProvisionWrapper, action_root.join('provision')
       autoload :WaitForServerToStop, action_root.join('wait_stop')
       autoload :WaitForServerToBeActive, action_root.join('wait_active')
-      autoload :WaitForServerToBeAccessible, action_root.join('wait_accessible')
 
       private
 
